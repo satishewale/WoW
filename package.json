@@ -1,0 +1,11 @@
+{
+  "name": "influxdb",
+  "description": "Sample project for influx Db",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "influx" : "*",
+    "express" : "*",
+    "body-parser" : "*"
+  }
+}

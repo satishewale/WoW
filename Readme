@@ -1,0 +1,16 @@
+
+
+Sample POC contains basic function which used to log data to influx db.
+
+For this you need to install influx db first.
+
+start influx db using
+
+To have launchd start influxdb at login:
+    ln -sfv /usr/local/opt/influxdb/*.plist ~/Library/LaunchAgents
+Then to load influxdb now:
+    launchctl load ~/Library/LaunchAgents/homebrew.mxcl.influxdb.plist
+
+### you can access web UI through http://localhost:8083/
+
+
