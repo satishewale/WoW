@@ -91,9 +91,9 @@ function initTable(data){
         '<td class="options-width">'+
         '<a href="'+editUrl+'" title="Edit" class="icon-1 info-tooltip"></a>'+
         '<a  onclick="deleteProduct(this)" id='+currntObj._id+' title="Edit" class="icon-2 info-tooltip"></a>'+
-        '<a href="" title="Edit" class="icon-3 info-tooltip"></a>'+
+        //'<a href="" title="Edit" class="icon-3 info-tooltip"></a>'+
         '<a onclick="insertCart(this)" id='+currntObj._id+' title="Edit" class="icon-4 info-tooltip"></a>'+
-        '<a onclick="updateSoldProduct(this)" id='+currntObj._id+' title="Edit" class="icon-5 info-tooltip"></a>'+
+        //'<a onclick="updateSoldProduct(this)" id='+currntObj._id+' title="Edit" class="icon-5 info-tooltip"></a>'+
         '</td>'+
         '</tr>';
 
