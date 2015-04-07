@@ -212,6 +212,18 @@
             window.location.assign("/public/invoice/template.html");
         }
 
+        function clearMyBag(){
+            var url = "http://localhost:3000/clearCart";
+            makeAjaxRequest({},url,function(resp){
+
+                if(resp === 3002){
+                    return;
+                }
+
+                window.location.assign("/public/template/dashboard.html");
+            });
+        }
+
     </script>
 
     <!--  styled select box script version 2 -->

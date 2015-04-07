@@ -171,7 +171,7 @@ function initBillingTable(data){
         '<td>'+final+'</td>'+
         '<td>'+
         '<input type="button" value="Save"  onclick="onSublmitClick()" value="" class="form-submit" />'+
-        '<input type="reset" value="" onclick="clearAllFields()" class="form-reset"  /></td>'+
+        '<input type="reset" value="" onclick="clearMyBag()" class="form-reset"  /></td>'+
     '   </tr>';
     finalString = finalString + tablrString;
 
