@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>Billing</title>
+    <title>Set Up</title>
     <link rel="stylesheet" href="css/screen.css" type="text/css" media="screen" title="default"/>
     <!--[if IE]>
     <link rel="stylesheet" media="all" type="text/css" href="css/pro_dropline_ie.css"/>
@@ -208,10 +208,30 @@
             });
         };
 
+        //Submit request
+
         function onSublmitClick(){
-            window.location.assign("/public/invoice/template.html");
+            window.open("/public/invoice/template.html",'_blank');
+
+            var url = "http://localhost:3000/insertBill";
+
+            var request = {
+                soldDate : new Date().getTime(),
+                billInfo : billingResponse,
+                totalAmount: $('#totalRow').find('td:eq(4)').text()
+            }
+
+            makeAjaxRequest(request,url,function(resp){
+            });
+
+            //Function to remove this from collection
+            setTimeout(function(){
+                clearMyBag();
+                window.location.assign("/public/template/dashboard.html");
+            },2000);
         }
 
+        //clear Bag collection
         function clearMyBag(){
             var url = "http://localhost:3000/clearCart";
             makeAjaxRequest({},url,function(resp){

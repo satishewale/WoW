@@ -88,7 +88,6 @@ app.get('/getProductById/:id', function(req, res) {
     })
 });
 
-
 app.get('/deleteProduct/:id', function(req, res) {
 
     var id = req.params.id;
@@ -165,6 +164,60 @@ app.get('/getAllProductIncart/', function(req, res) {
 });
 
 
+//BIlling APIS
+
+app.post('/insertBill/', function(req, res) {
+
+
+    var body = req.body;
+    console.log("In insertBill Product : ");
+    mongoClient.insertBill(body,function(err,resp){
+        res.send(JSON.stringify(resp));
+    })
+});
+
+
 app.listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));
 });
+
+//Product Info
+
+app.get('/getProductInfo/:name', function(req, res) {
+
+    var name = req.params.name;
+    mongoClient.getProductInfo(name,function(err,resp){
+        res.send(JSON.stringify(resp));
+    })
+});
+
+
+app.post('/insertSetup/:name', function(req, res) {
+
+    var name = req.params.name;
+    var body = req.body;
+    mongoClient.insertSetup(body,name,function(err,resp){
+        res.send(JSON.stringify(resp));
+    })
+});
+
+app.post('/updateSetup/:name', function(req, res) {
+
+    var name = req.params.name;
+    var body = req.body;
+    mongoClient.updateSetup(body,name,function(err,resp){
+        res.send(JSON.stringify(resp));
+    })
+});
+
+
+app.post('/deleteSetup/:name', function(req, res) {
+
+    var name = req.params.name;
+    var body = req.body;
+    mongoClient.deleteSetup(body,name,function(err,resp){
+        res.send(JSON.stringify(resp));
+    })
+});
+
+

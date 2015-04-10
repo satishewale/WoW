@@ -5,6 +5,8 @@ var MongoClient = mongo.MongoClient;
 var myCollection;
 var userCollection;
 var cartCollection;
+var billingCollection;
+var productInfoCollection;
 var ObjectID = mongo.ObjectID;
 
 var initMongoClient = function(){
@@ -19,6 +21,8 @@ var initMongoClient = function(){
         myCollection = db.collection('products');
         userCollection = db.collection('users');
         cartCollection = db.collection('cart');
+        billingCollection = db.collection('bills');
+        productInfoCollection = db.collection('setup');
     });
 };
 
@@ -335,4 +339,110 @@ function clearCart(body,callback){
 }
 initMongoClient.prototype.clearCart = clearCart;
 
+
+//Billing related WORK
+initMongoClient.prototype.insertBill = function(requestBody,callback){
+    console.log("mongoClient.js >> Came into insertBill");
+
+    billingCollection.insert(requestBody,function(error,result){
+
+        if(error){
+            callback("error occured")
+            return;
+        }
+
+        callback(null,result);
+
+    });
+}
+
+
+//
+//Product Info
+
+
+function getProductInfoSep(name,callback){
+    console.log("mongoClient.js >> Came into getProductInfo");
+    productInfoCollection.find({"name" : name}).toArray(function(err,response) {
+
+        if (err) {
+            callback("error occured")
+            return;
+        }
+
+        //console.log(response);
+
+        callback(null,response);
+        return;
+    });
+}
+
+initMongoClient.prototype.getProductInfo = getProductInfoSep;
+
+initMongoClient.prototype.insertSetup = function(body,name,callback){
+    console.log("mongoClient.js >> Came into insertSetup : " + name);
+
+    productInfoCollection.findOne({"name" : name,"value" : body.value},function(error,result) {
+
+        if (error) {
+            //callback("error occured")
+            getProductInfoSep(name,callback);
+        }
+
+        if(!result){
+            productInfoCollection.insert({"name" : name,"value" : body.value},function(error,result){
+
+                if(error){
+                    callback("error occured")
+                    return;
+                }
+
+
+                getProductInfoSep(name,callback);
+            });
+        }else{
+            getProductInfoSep(name,callback);
+        }
+
+    });
+}
+
+
+initMongoClient.prototype.updateSetup = function(body,name,callback){
+    console.log("mongoClient.js >> Came into updateSetup");
+
+
+    productInfoCollection.update({"name" : name,"value" : body.oldValue},{$set : {"value" : body.value}},function(err,resp){
+
+            if(err){
+                //callback("error occured")
+                return;
+            }
+
+            console.log("Response : " + JSON.stringify(resp));
+
+            getProductInfoSep(name,callback);
+            return;
+            //callback(null,resp);
+        })
+
+        //console.log(response);
+
+}
+
+initMongoClient.prototype.deleteSetup = function(body,name,callback){
+    console.log("mongoClient.js >> Came into deleteSetup : " + name);
+
+
+    productInfoCollection.remove({"name" : name,"value" : body.value},function(error,result){
+
+        if(error){
+            callback("error occured")
+            return;
+        }
+
+
+        getProductInfoSep(name,callback);
+    });
+}
 module.exports = new initMongoClient();
