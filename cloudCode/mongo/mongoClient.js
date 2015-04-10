@@ -363,7 +363,8 @@ initMongoClient.prototype.insertBill = function(requestBody,callback){
 
 function getProductInfoSep(name,callback){
     console.log("mongoClient.js >> Came into getProductInfo");
-    productInfoCollection.find({"name" : name}).toArray(function(err,response) {
+
+    productInfoCollection.find(name == "all" ? {}:{"name" : name}).toArray(function(err,response) {
 
         if (err) {
             callback("error occured")
