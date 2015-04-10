@@ -137,6 +137,10 @@ $(function(){
 		});
 	};
 
+	function generateNew(){
+		window.open("/public/invoice/template.html",'_blank');
+	}
+
 
 </script>
 
@@ -414,6 +418,26 @@ $(document).pngFix( );
 					<div class="select_sub">
 						<ul class="sub">
 							<li><a onclick="clearMyBag()">Clear All</a></li>
+							<li><a onclick="generateNew()">Generate Bill</a></li>
+						</ul>
+					</div>
+					<!--[if lte IE 6]></td></tr></table></a><![endif]-->
+				</li>
+			</ul>
+
+			<div class="nav-divider">&nbsp;</div>
+
+			<ul class="select">
+				<li><a href="/public/template/setup.html?name=category"><b>Set Up</b><!--[if IE 7]><!--></a><!--<![endif]-->
+					<!--[if lte IE 6]>
+					<table>
+						<tr>
+							<td><![endif]-->
+					<div class="select_sub">
+						<ul class="sub">
+							<li><a href="/public/template/setup.html?name=category" >Category</a></li>
+							<li><a href="/public/template/setup.html?name=brand" >Brand</a></li>
+							<li><a href="/public/template/setup.html?name=size" >Size</a></li>
 						</ul>
 					</div>
 					<!--[if lte IE 6]></td></tr></table></a><![endif]-->
@@ -479,7 +503,7 @@ $(document).pngFix( );
 	<td>
 	
 	
-	
+
 		<!--  end step-holder -->
 	
 		<!-- start id-form -->
