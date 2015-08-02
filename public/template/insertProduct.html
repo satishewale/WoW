@@ -28,7 +28,7 @@ $(function(){
 </script>
 
 <script type="text/javascript">
-
+	$(document).ready(function() {
 	//Function use to perform logout operations
 	function logout(){
 		window.location.assign("/public/template/login.html");
@@ -59,7 +59,26 @@ $(function(){
 
 			}
 		});
+
+		//inSert category in table
+		function assignValuesTofields2(){
+
+			makeGetAjaxRequest({"getRecord" : true},"http://localhost:3000/getProductInfo/category",function(resp){
+
+				if(resp === 3002){
+					return;
+				}
+				resp = JSON.parse(resp)
+				console.log(resp.price);
+
+				for(var cnt = 0;cnt < resp.length ; cnt ++){
+					$("#categoryUl ul").append('<li><a href="/public/template/dashboard.html?category='+resp[cnt].value+'">'+ resp[cnt].value+'</a></li>');
+				}
+			});
+		}assignValuesTofields2();
+
 	}assignValuesTofields();
+	});
 
 	function onSublmitClick(){
 		console.log("onSublmitClick >> Start");
@@ -89,11 +108,17 @@ $(function(){
 		var quantity = document.getElementById("quantity").value;
 		requestObj.quantity = parseInt(quantity);
 
+		if(isNaN(requestObj.price) || isNaN(requestObj.quantity)){
+			alert("Please Enter valid price or quantity");
+			return;
+		}
+
 		var discount = document.getElementById("discount").value;
 		requestObj.discount = parseInt(discount);
 
-
-
+		if(isNaN(requestObj.discount)){
+			requestObj.discount=0;
+		}
 		requestObj.createddate = new Date();
 
 		requestObj.isSold = false;
@@ -357,11 +382,8 @@ $(document).pngFix( );
 					<table>
 						<tr>
 							<td><![endif]-->
-					<div class="select_sub">
+					<div id="categoryUl" class="select_sub">
 						<ul class="sub">
-							<li><a href="/public/template/dashboard.html?category=Jeans">Jeans</a></li>
-							<li><a href="/public/template/dashboard.html?category=Tshirt">T-shirt</a></li>
-							<li><a href="/public/template/dashboard.html?category=Casual">Casual</a></li>
 						</ul>
 					</div>
 					<!--[if lte IE 6]></td></tr></table></a><![endif]-->
@@ -497,7 +519,7 @@ $(document).pngFix( );
             <tr>
             <th valign="top">Category:</th>
             <td>
-            <select id="categoryCheckBox"  >
+            <select id="categoryCheckBox" class="selectboxtext"  >
 
             </select>
             </td>
@@ -506,16 +528,16 @@ $(document).pngFix( );
 			<tr>
 				<th valign="top">Brand:</th>
 				<td>
-					<select id="brandCheckBox"  >
+					<select id="brandCheckBox"  class="selectboxtext" >
 
 					</select>
 				</td>
 				<td></td>
 			</tr>
             <tr>
-            <th valign="top">Size:</th>
+            <th valign="top" >Size:</th>
             <td>
-            <select id="sizeCheckBox" >
+            <select id="sizeCheckBox" class="selectboxtext">
 
             </select>
             </td>
@@ -524,7 +546,7 @@ $(document).pngFix( );
             <tr>
                 <th valign="top">Price:</th>
                 <td><input id="price" type="text" class="inp-form" /></td>
-                <td></td>
+				<td></td>
             </tr>
 
 			<tr>

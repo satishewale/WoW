@@ -28,15 +28,20 @@ $(function(){
 </script>
 
 <script type="text/javascript">
+	var name;
+	$(document).ready(function() {
+		name = getQuerystringNameValue("name");
+	if(name == "category"){
+		$("#ul1").addClass("sub_show");
+	}else if(name == "brand"){
+		$("#ul2").append("sub_show");
+	}else if(name == "size"){
+		$("#ul3").append("sub_show");
+	}
 
-
-	var name = getQuerystringNameValue("name");
 
 	//$("#categoryName").text(name);
 	function assignValuesTofields(){
-
-
-		//console.log();
 
 		makeGetAjaxRequest({"getRecord" : true},"http://localhost:3000/getProductInfo/" + name,function(resp){
 
@@ -54,7 +59,26 @@ $(function(){
 				$('#discount').val(resp[0].value);
 
 		});
+
+		//inSert category in table
+		function assignValuesTofields2(){
+
+			makeGetAjaxRequest({"getRecord" : true},"http://localhost:3000/getProductInfo/category",function(resp){
+
+				if(resp === 3002){
+					return;
+				}
+				resp = JSON.parse(resp)
+				console.log(resp.price);
+
+				for(var cnt = 0;cnt < resp.length ; cnt ++){
+					$("#categoryUl ul").append('<li><a href="/public/template/dashboard.html?category='+resp[cnt].value+'">'+ resp[cnt].value+'</a></li>');
+				}
+			});
+		}assignValuesTofields2();
 	}assignValuesTofields();
+
+	});
 
 
 	function generateNew(){
@@ -154,9 +178,6 @@ $(function(){
 
 		$('#discount').val(oldValue);
 	}
-
-
-
 </script>
 
 <![if !IE 7]>
@@ -411,11 +432,9 @@ $(document).pngFix( );
 					<table>
 						<tr>
 							<td><![endif]-->
-					<div class="select_sub">
+					<div id="categoryUl" class="select_sub">
 						<ul class="sub">
-							<li><a href="/public/template/dashboard.html?category=Jeans">Jeans</a></li>
-							<li><a href="/public/template/dashboard.html?category=Tshirt">T-shirt</a></li>
-							<li><a href="/public/template/dashboard.html?category=Casual">Casual</a></li>
+
 						</ul>
 					</div>
 					<!--[if lte IE 6]></td></tr></table></a><![endif]-->
@@ -450,9 +469,9 @@ $(document).pngFix( );
 							<td><![endif]-->
 					<div class="select_sub show">
 						<ul class="sub">
-							<li><a href="/public/template/setup.html?name=category" >Category</a></li>
-							<li><a href="/public/template/setup.html?name=brand" >Brand</a></li>
-							<li><a href="/public/template/setup.html?name=size" >Size</a></li>
+							<li id="ul1"><a href="/public/template/setup.html?name=category" >Category</a></li>
+							<li id="ul2"><a href="/public/template/setup.html?name=brand" >Brand</a></li>
+							<li id="ul3"><a href="/public/template/setup.html?name=size" >Size</a></li>
 						</ul>
 					</div>
 					<!--[if lte IE 6]></td></tr></table></a><![endif]-->
@@ -496,7 +515,7 @@ $(document).pngFix( );
 <div id="content">
 
 
-<div id="page-heading"><h1>Edit product</h1></div>
+<div id="page-heading"><h1>Set Up</h1></div>
 
 
 <table border="0" width="100%" cellpadding="0" cellspacing="0" id="content-table">
@@ -540,7 +559,7 @@ $(document).pngFix( );
 			<tr>
 				<th valign="top" id="categoryName">Category:</th>
 				<td>
-					<select id="categoryCheckBox" onchange="changeList()"  >
+					<select id="categoryCheckBox" class="selectboxtext" onchange="changeList()"  >
 
 					</select>
 				</td>
@@ -582,7 +601,7 @@ $(document).pngFix( );
             <td valign="top">
                 <input type="button" value="Save"  onclick="onSublmitClick()" value="" class="form-submit" />
                 <input type="reset" value="" onclick="clearAllFields()" class="form-reset"  />
-				<input type="button" value="Update" onclick="update()" />
+				<input type="button" class="buttontextSize" value="Update" onclick="update()" />
             </td>
             <td></td>
         </tr>

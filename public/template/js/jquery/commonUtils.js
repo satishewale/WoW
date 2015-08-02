@@ -4,6 +4,7 @@
  * @param request
  * @param callback
  */
+var sessionId = null;
 function makeAjaxRequest(request,url,callback)
 {
     var xmlhttp;
@@ -19,12 +20,23 @@ function makeAjaxRequest(request,url,callback)
     {
         if (xmlhttp.readyState==4 && xmlhttp.status==200)
         {
+
+            //if(url.indexOf('authenticate') > -1){
+            //    try{
+            //        var resp = JSON.parse(xmlhttp.responseText);
+            //        sessionId = resp.sessionId;
+            //    }catch (error){
+            //        console.log("Error While fetching the sesssionID");
+            //    }
+            //}
             callback(xmlhttp.responseText);
             return;
         }
     }
+    console.log("SessionId : " + sessionId);
     xmlhttp.open("POST",url,true);
     xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    //xmlhttp.setRequestHeader("x-session-id", sessionId);
     xmlhttp.send(JSON.stringify(request));
 }
 
@@ -57,6 +69,7 @@ function makeGetAjaxRequest(request,url,callback)
     }
     xmlhttp.open("GET",url,true);
     xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    //xmlhttp.setRequestHeader("x-session-id", sessionId);
     xmlhttp.send();
 }
 
@@ -74,9 +87,10 @@ function initTable(data){
     '<th class="table-header-options line-left"><a href="">Description</a></th>'+
     '</tr>';
 
+    var flag = true;
     //console.log("Lenght" + currntObj._id);
     for (var cnt =0 ; cnt < data.length; cnt++){
-
+        flag = false;
         var currntObj = data[cnt];
         var editUrl = "/public/template/editProduct.html?id="+ currntObj._id;
 
@@ -97,7 +111,7 @@ function initTable(data){
         '</td>'+
         '</tr>';
 
-        console.log("######### : " + currntObj._id);
+        //console.log("######### : " + currntObj._id);
 
         finalString = finalString + tablrString;
 
@@ -105,8 +119,72 @@ function initTable(data){
 
     finalString = finalString + '</table>';
 
+    if(flag){
+        finalString = '<h1>No Products to show</h1>'
+    }
+
     document.getElementById('mainform').innerHTML = finalString;
 }
+
+function initHistroyTable(data){
+
+    var finalString = '<table border="0" width="100%" cellpadding="0" cellspacing="0" id="product-table">'+
+        '<tr>'+
+        '<th class="table-header-check"><a id="toggle-all" ></a> </th>'+
+        '<th class="table-header-repeat line-left"><a href="">Discription</a></th>'+
+        '<th class="table-header-repeat line-left minwidth-1"><a href="">Category</a></th>'+
+        '<th class="table-header-repeat line-left minwidth-1"><a href="">Brand</a></th>'+
+        '<th class="table-header-repeat line-left"><a href="">Size</a></th>'+
+        '<th class="table-header-repeat line-left"><a href="">Price</a></th>'+
+        '<th class="table-header-repeat line-left"><a href="">Quantity</a></th>'+
+        '<th class="table-header-repeat line-left"><a href="">Discount</a></th>'+
+        '</tr>';
+
+    //console.log("Lenght" + currntObj._id);
+    var flag = true;
+    var total = 0 ;
+    for (var cnt =0 ; cnt < data.length; cnt++){
+
+        flag = false;
+
+        var tablrString = '<tr id="row_' + data[cnt]._id + '">' +
+            '<td><input  type="checkbox"/></td>' +
+            '<td> SubTotal= Rs ' + data[cnt].totalAmount + '</td>';
+
+        total+= parseInt(data[cnt].totalAmount);
+
+        for(var i  = 0; i  < data[cnt].billInfo.length ; i++) {
+            var currntObj = data[cnt].billInfo[i];
+
+            if(i !== 0){
+                tablrString += '<tr>' +
+                '<td><input  type="checkbox"/></td>' +
+                '<td></td>';
+            }
+            tablrString += '<td>' + currntObj.category + '</td>' +
+                '<td>' + currntObj.brand + '</td>' +
+                '<td><a href="">' + currntObj.size + '</a></td>' +
+                '<td>R' + currntObj.price + '</td>' +
+                '<td><a href="">' + currntObj.quantity + '</a></td>' +
+                '<td><a href="">' + currntObj.discount + '</a></td>' +
+                '</tr>';
+        }
+
+        //console.log(tablrString);
+
+        finalString = finalString + tablrString;
+
+    }
+
+    finalString = finalString + '</table>';
+    finalString+= '<div><h1> Total Amont of the period : Rs '+ total +' </h1></div>'
+    if(flag){
+        finalString = '<h1> No products to show. Select a correct date.</h1>'
+    }
+
+    document.getElementById('mainform').innerHTML = finalString;
+}
+
 
 function initBillingTable(data){
 
@@ -122,10 +200,12 @@ function initBillingTable(data){
 
     //console.log("Lenght" + currntObj._id);
     var cnt = 0;
-    var final = 0
+    var final = 0;
+    var flag= true;
     for (cnt =0 ; cnt < data.length; cnt++){
 
         var currntObj = data[cnt];
+        flag = false;
 
         var original = parseInt(currntObj.price) * parseInt(currntObj.inCartQuantity);
         var discounted = original * (parseInt(currntObj.discount) /100);
@@ -140,8 +220,8 @@ function initBillingTable(data){
             '<td>'+ total +'</td>'+
             '<td class="options-width">'+
             '<a onClick="onPlusClick(this)" id='+currntObj._id+' title="Edit" class="icon-1 info-tooltip"></a>'+
-            '<a  onclick="onMinusClick(this)" id='+currntObj._id+' title="Edit" class="icon-2 info-tooltip"></a>'+
-            '<a  onclick="onDeleteClick(this)" id='+currntObj._id+' title="Edit" class="icon-2 info-tooltip"></a>'+
+            '<a  onclick="onMinusClick(this)"  id='+currntObj._id+' title="Delete" class="icon-2 info-tooltip"></a>'+
+            '<a  onclick="onDeleteClick(this)" id='+currntObj._id+' title="Remove" class="icon-3 info-tooltip"></a>'+
             '</td>'+
             '</tr>';
 
@@ -177,6 +257,11 @@ function initBillingTable(data){
 
 
     finalString = finalString + '</table>';
+
+    if(flag){
+        finalString = '<h1>No Bills to show</h1>'
+    }
+
 
     document.getElementById('mainform').innerHTML = finalString;
 }

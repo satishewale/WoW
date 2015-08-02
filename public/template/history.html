@@ -34,150 +34,40 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $('.styledselect').selectbox({inputClass: "selectbox_styled"});
-            getReady();
+            //getReady();
+
+            $('input[type="date"]').change(function(){
+
+                if(this.id === 'firstdate'){
+                    getReady({"soldDate" : this.value});
+                }else if(this.id === 'f2date'){
+
+                    var firstDateValue = $('#f1date').val();
+                    if(!firstDateValue || firstDateValue.length == 0){
+                        alert("select starting date");
+                        return;
+                    }
+                    var secondDateValue = $('#f2date').val();
+                    getReady({"firstDate" : firstDateValue, "secondDate" : secondDateValue});
+                }
+            });
         });
 
-        function getReady() {
-
-            var category = getQuerystringNameValue("category");
-            var request = {};
-            if (category) {
-                request.category = category;
-            }
-            ;
-
+        function getReady(request) {
             console.log("### Request" + JSON.stringify(request));
 
-            makeAjaxRequest(request, "http://localhost:3000/getProducts", function (resp) {
+            makeAjaxRequest(request, "http://localhost:3000/getBill", function (resp) {
 
                 if (resp === 3002) {
                     return;
                 }
 
                 console.log(resp);
-                initTable(JSON.parse(resp));
-            });
-
-
-            //inSert category in table
-            function assignValuesTofields() {
-
-                makeGetAjaxRequest({"getRecord": true}, "http://localhost:3000/getProductInfo/category", function (resp) {
-
-                    if (resp === 3002) {
-                        return;
-                    }
-                    resp = JSON.parse(resp)
-                    console.log(resp.price);
-
-                    for (var cnt = 0; cnt < resp.length; cnt++) {
-                        $("#categoryUl ul").append('<li><a href="/public/template/dashboard.html?category=' + resp[cnt].value + '">' + resp[cnt].value + '</a></li>');
-                    }
-                });
-            }
-
-            assignValuesTofields();
-        }
-
-        function deleteProduct(e){
-
-            var url = "http://localhost:3000/deleteProduct/" + e.id;
-            makeGetAjaxRequest({"getRecord" : true},url,function(resp){
-
-                if(resp === 3002){
-                    return;
-                }
-
-                getReady();
-            });
-        }
-
-        function refactorList(e){
-
-            var option = e[e.selectedIndex].text;
-            option = option.toLowerCase();
-
-            var request = {
-                category : {},
-                sortCriteria : {}
-            };
-
-            request.sortCriteria[option] = 1;
-            console.log(request);
-
-            makeAjaxRequest(request, "http://localhost:3000/getSortedProducts", function (resp) {
-
-                if (resp === 3002) {
-                    return;
-                }
-
-                initTable(JSON.parse(resp));
-            });
-        }
-
-        function updateSoldProduct(e){
-
-            console.log("Came into updateSoldProduct" + e.id);
-            var url = "http://localhost:3000/updateSoldProduct/" + e.id;
-            makeAjaxRequest({"isSold" : true, "soldDate" : new Date()},url,function(resp){
-
-                if(resp === 3002){
-                    return;
-                }
-
-                getReady();
+                initHistroyTable(JSON.parse(resp));
             });
         }
 
 
-
-
-        function insertCart(e){
-
-            var previousQuantity = $('#row_'+ e.id).find('td:eq(5)').text();
-            previousQuantity = parseInt(previousQuantity);
-
-            if(previousQuantity === 0){
-                alert("NO More Items in List");
-                return;
-            }
-
-            //Ajax call to reduce contity by one
-            var req1 = {
-                "quantity" : previousQuantity - 1
-            };
-            var url = "http://localhost:3000/reduceQuantity/" + e.id;
-            makeAjaxRequest(req1,url,function(resp){
-
-            });
-
-            //Ajax call to Insert entry into cart
-            var url = "http://localhost:3000/insertCart/" + e.id;
-            makeGetAjaxRequest({"getRecord" : true},url,function(resp){
-
-                if(resp === 3002){
-                    return;
-                }
-                previousQuantity--;
-                $('#row_'+ e.id).find('td:eq(5)').text(previousQuantity);
-            });
-        }
-
-        function clearMyBag(){
-            var url = "http://localhost:3000/clearCart";
-            makeAjaxRequest({},url,function(resp){
-
-                if(resp === 3002){
-                    return;
-                }
-
-                getReady();
-            });
-        }
-
-        function generateNew(){
-            window.open("/public/invoice/template.html",'_blank');
-        }
 
     </script>
 
@@ -441,7 +331,6 @@
                             <ul class="sub">
                                 <li><a onclick="clearMyBag()">Clear All</a></li>
                                 <li><a onclick="generateNew()">Generate Bill</a></li>
-                                <li><a href="/public/template/history.html">Billing History</a>></li>
                             </ul>
                         </div>
                         <!--[if lte IE 6]></td></tr></table></a><![endif]-->
@@ -475,7 +364,11 @@
                         <table>
                             <tr>
                                 <td><![endif]-->
+                        <div class="select_sub">
+                            <ul class="sub">
 
+                            </ul>
+                        </div>
                         <!--[if lte IE 6]></td></tr></table></a><![endif]-->
                     </li>
                 </ul>
@@ -502,6 +395,10 @@
         <!--  start page-heading -->
         <div id="page-heading">
             <h1>Show List</h1>
+            <h2>Select Date</h2><input type="date" id="firstdate">
+            <h1>Select Duration</h1>
+            <input type="date" id="f1date">
+            <input type="date" id="f2date">
         </div>
         <!-- end page-heading -->
 

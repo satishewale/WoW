@@ -33,6 +33,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $('.styledselect').selectbox({inputClass: "selectbox_styled"});
+            getReady();
         });
 
         var billingResponse = null;
@@ -44,13 +45,17 @@
                     return;
                 }
 
-                console.log(resp);
+               if(!resp){
+                   document.getElementById('mainform').innerHTML = '<h1>No Bills to show</h1>';
+                   return;
+               }
+
                 billingResponse = JSON.parse(resp);
                 initBillingTable(billingResponse);
             });
         }
 
-        getReady();
+
 
 
         function onPlusClick(e){
@@ -233,7 +238,7 @@
 
         //clear Bag collection
         function clearMyBag(){
-            var url = "http://localhost:3000/clearCart";
+            var url = "http://localhost:3000/clearMyBag";
             makeAjaxRequest({},url,function(resp){
 
                 if(resp === 3002){
@@ -486,11 +491,9 @@
                         <table>
                             <tr>
                                 <td><![endif]-->
-                        <div class="select_sub">
+                        <div id="categoryUl" class="select_sub">
                             <ul class="sub">
-                                <li><a href="/public/template/dashboard.html?category=Jeans">Jeans</a></li>
-                                <li><a href="/public/template/dashboard.html?category=Tshirt">T-shirt</a></li>
-                                <li><a href="/public/template/dashboard.html?category=Casual">Casual</a></li>
+
                             </ul>
                         </div>
                         <!--[if lte IE 6]></td></tr></table></a><![endif]-->

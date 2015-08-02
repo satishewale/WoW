@@ -29,6 +29,8 @@ var initMongoClient = function(){
 initMongoClient.prototype.insertProduct = function(requestBody,callback){
     console.log("mongoClient.js >> Came into insertProduct");
 
+
+    requestBody.createddate = new Date(requestBody.createddate);
     myCollection.insert(requestBody,function(error,result){
 
         if(error){
@@ -285,6 +287,9 @@ initMongoClient.prototype.getAllProductIncart = function(callback){
 
 function clearCart(body,callback){
 
+    console.log("How come i end up here");
+
+
     cartCollection.find(body).toArray(function(err,response){
 
         if(err){
@@ -337,13 +342,24 @@ function clearCart(body,callback){
         });
     });
 }
+function clearMyBag(body,callback){
+
+    conslo.log("Came intonthe mu cmag");
+        cartCollection.remove(body, function (err, noOfRecordsDeleted) {
+
+            console.log("came into condtion : "  + err);
+            callback(err, noOfRecordsDeleted);
+        });
+}
 initMongoClient.prototype.clearCart = clearCart;
+initMongoClient.prototype.clearMyBag = clearMyBag;
 
 
 //Billing related WORK
 initMongoClient.prototype.insertBill = function(requestBody,callback){
     console.log("mongoClient.js >> Came into insertBill");
 
+    requestBody.soldDate = new Date(requestBody.soldDate);
     billingCollection.insert(requestBody,function(error,result){
 
         if(error){
@@ -355,6 +371,45 @@ initMongoClient.prototype.insertBill = function(requestBody,callback){
 
     });
 }
+
+//Billing related WORK
+initMongoClient.prototype.getBill = function(requestBody,callback){
+    console.log("mongoClient.js >> Came into getBill");
+
+    var query = {};
+
+    if(requestBody.soldDate){
+        var startdate = new Date(requestBody.soldDate);
+        startdate.setHours(0,0,0,0);
+
+        var endDate = new Date(requestBody.soldDate);
+        endDate.setHours(23,59,59,999);
+
+        query.soldDate = {$gte: startdate, $lt: endDate};
+    }else{
+        var startdate = new Date(requestBody.firstDate);
+        startdate.setHours(0,0,0,0);
+
+        var endDate = new Date(requestBody.secondDate);
+        endDate.setHours(23,59,59,999);
+
+        query.soldDate = {$gte: startdate, $lt: endDate};
+    }
+    console.log(query);
+
+    billingCollection.find(query).toArray(function(error,result){
+
+        if(error){
+            callback("error occured")
+            return;
+        }
+
+        console.log(result);
+        callback(null,result);
+
+    });
+}
+
 
 
 //
